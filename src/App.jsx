@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { API_KEY } from '../config.js';
+import { API_KEY, BACKEND_PORT, BACKEND_URL } from '../config.js';
+const { productData } = require('../productData.js')
 import OverviewAllie from './components/productDetailsAllie/overviewAllie.jsx';
 import QuestionsAndAnswers from './components/QAcomponent/QandA.jsx';
 import RatingsAndReviews from './components/ratingsAndReviews/ratingsAndReviews.jsx';
@@ -10,12 +11,11 @@ import QASearchBar from './components/QAcomponent//QAsearch.jsx'
 import RelatedItems from './components/relatedItems/RelatedItems.jsx';
 import StarRating from './components/StarRating.jsx'
 
-
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: [],
+      products: productData,
       styles: [],
       currentProduct: [],
       currentProductID: '',
@@ -57,7 +57,7 @@ class App extends React.Component {
   //push the object onto relatedItemsData
 
   getProducts() {
-    axios.get('https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfe/products', { headers: { Authorization: `${API_KEY}` } })
+    axios.get(`https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfe/products`, { headers: { Authorization: `${API_KEY}` } })
       .then(productRes => {
         axios.get(`https://app-hrsei-api.herokuapp.com/api/fec2/hr-rfe/products/${productRes.data[0].id}/styles`, { headers: { Authorization: `${API_KEY}` } })
           .then(styleRes => {
@@ -308,12 +308,15 @@ class App extends React.Component {
   render() {
     return (
       <div>
+      <h1>Overview</h1>
         <OverviewAllie products={this.state.products} currentProduct={this.state.currentProduct} styles={this.state.styles} price={this.state.price} originalPrice={this.state.originalPrice} currentStyle={this.state.currentStyle} image={this.state.image} skus={this.state.skus} updateStyle={this.updateStyle} updateProduct={this.updateProduct} submitCart={this.submitCart} features={this.state.features} currentItemRating={this.state.currentItemRating}/>
 
-
+<p>Related Items</p>
         <RelatedItems currentProduct={this.state.currentProduct} relatedItems={this.state.relatedItems} currentProductPrice={this.state.price} currentProductImage={this.state.image} currentProductFeatures={this.state.features} currentItemRating={this.state.currentItemRating}/>
 
+<p>Questions and Answers</p>
         <QuestionsAndAnswers currentQuestions={this.state.currentQuestions} currentProduct={this.state.currentProduct} updateHelpful={this.updateHelpfulAndReport} addQorA={this.addQuestionOrAnswer}/>
+        <p>Ratings and Reviews</p>
         <RatingsAndReviews />
       </div>
     )
